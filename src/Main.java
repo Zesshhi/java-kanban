@@ -19,27 +19,6 @@ public class Main {
 
         System.out.println(taskManager.getTasks().toString());
 
-        currentIdOfTask++;
-        Epic epic = new Epic("Epic 1", "Epic description 1", currentIdOfTask, new ArrayList<SubTask>(0));
-        taskManager.createEpic(epic);
-
-        System.out.println(taskManager.getEpics().toString());
-
-        currentIdOfTask++;
-        SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic);
-        taskManager.createSubTask(subTask);
-
-        currentIdOfTask++;
-        SubTask subTask2 = new SubTask("SubTask 2", "SubTask description 2", currentIdOfTask, epic);
-        taskManager.createSubTask(subTask2);
-
-        System.out.println(taskManager.getSubTasks());
-
-        epic.setSubTasks(new ArrayList<>(Arrays.asList(subTask, subTask2)));
-        taskManager.updateEpic(epic);
-
-        System.out.println(taskManager.getEpics().toString());
-
         taskManager.deleteTask(task2.getId());
 
         task.setName("Updated Task 1 Name");
@@ -47,13 +26,40 @@ public class Main {
 
         System.out.println(taskManager.getTasks());
 
+        System.out.println("TASKS " + "=".repeat(50));
+
+        currentIdOfTask++;
+        Epic epic = new Epic("Epic 1", "Epic description 1", currentIdOfTask, new ArrayList<>(0));
+        taskManager.createEpic(epic);
+
+
+        currentIdOfTask++;
+        SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId());
+        taskManager.createSubTask(subTask);
+
+        currentIdOfTask++;
+        SubTask subTask2 = new SubTask("SubTask 2", "SubTask description 2", currentIdOfTask, epic.getId());
+        taskManager.createSubTask(subTask2);
+
+        subTask.setTaskStatus(TaskStatuses.DONE);
+        subTask.setDescription("Абоб");
+        taskManager.updateSubTask(subTask);
+
+        subTask2.setTaskStatus(TaskStatuses.DONE);
+        subTask2.setDescription("Абоб 2");
+        taskManager.updateSubTask(subTask2);
+
+        System.out.println(taskManager.getEpics().toString());
+        System.out.println(taskManager.getSubTasks().toString());
+
         taskManager.deleteSubTask(subTask2.getId());
 
         subTask.setTaskStatus(TaskStatuses.valueOf("DONE"));
         taskManager.updateSubTask(subTask);
-        System.out.println(taskManager.getSubTasks());
-        System.out.println(taskManager.getEpics());
 
+        taskManager.deleteEpic(epic.getId());
 
+        System.out.println(taskManager.getEpics().toString());
+        System.out.println(taskManager.getSubTasks().toString());
     }
 }
