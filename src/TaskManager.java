@@ -59,11 +59,8 @@ public class TaskManager {
         updatedSubTask.setDescription(subTask.getDescription());
         updatedSubTask.setTaskStatus(subTask.getTaskStatus());
 
-        subTasks.replace(subTask.getId(), subTask);
-
         Epic epic = epics.get(subTask.getEpicId());
 
-        epic.addSubTaskId(subTask.getId());
         epic.setTaskStatus(getEpicSubTasks(subTask.getEpicId()));
     }
 
@@ -95,11 +92,11 @@ public class TaskManager {
 
     public ArrayList<SubTask> getEpicSubTasks(int epicId) {
         // Получение всех подзадач Эпика
-        ArrayList<SubTask> epicSubTasks = new ArrayList<>(5);
-        for (SubTask subTask : subTasks.values()) {
-            if (subTask.getEpicId() == epicId) {
-                epicSubTasks.add(subTask);
-            }
+        ArrayList<SubTask> epicSubTasks = new ArrayList<>(1);
+        Epic epic = epics.get(epicId);
+
+        for (Integer subTaskId : epic.getSubTasksIds()) {
+            epicSubTasks.add(subTasks.get(subTaskId));
 
         }
         return epicSubTasks;
