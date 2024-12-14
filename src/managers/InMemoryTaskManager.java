@@ -1,8 +1,10 @@
-package task;
+package managers;
 
 import history.HistoryManager;
-import history.InMemoryHistoryManager;
-import managers.Managers;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+import task.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -81,8 +83,6 @@ public class InMemoryTaskManager implements TaskManager {
     public List<SubTask> getSubTasks() {
         return new ArrayList<>(subTasks.values());
     }
-
-    /// Тесты пока дошли до сюдова
 
     @Override
     public void updateTask(Task task) {

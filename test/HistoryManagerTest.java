@@ -9,6 +9,7 @@ import task.TaskManager;
 
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HistoryManagerTest {
@@ -87,6 +88,30 @@ public class HistoryManagerTest {
 
 
         assertEquals(inMemoryHistoryManager.getHistory().getFirst(), epic, "Задача не попала в историю");
+        assertEquals(10, inMemoryHistoryManager.getHistory().toArray().length);
+    }
+
+
+    @Test
+    public void should_add_all_tasks_to_history() {
+        Task task = createTask();
+        Epic epic = createEpic();
+        SubTask subTask = createSubTask(epic);
+        ArrayList<Task> watchedHistory = new ArrayList<>(10);
+
+        for (int i = 0; i < 3; i++) {
+            inMemoryTaskManager.getTask(task.getId());
+            inMemoryTaskManager.getEpic(epic.getId());
+            inMemoryTaskManager.getSubTask(subTask.getId());
+            watchedHistory.add(task);
+            watchedHistory.add(epic);
+            watchedHistory.add(subTask);
+        }
+
+        inMemoryTaskManager.getTask(task.getId());
+        watchedHistory.add(task);
+
+        assertArrayEquals(watchedHistory.toArray(), inMemoryHistoryManager.getHistory().toArray());
     }
 
 
