@@ -1,10 +1,8 @@
 package managers;
 
-import history.HistoryManager;
 import task.Epic;
 import task.SubTask;
 import task.Task;
-import task.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -109,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(updatedSubTask.getEpicId());
 
         if (!epic.getSubTasksIds().contains(updatedSubTask.getId())) {
-            ArrayList<Integer> newSubTasks = epic.getSubTasksIds();
+            List<Integer> newSubTasks = epic.getSubTasksIds();
             newSubTasks.add(updatedSubTask.getId());
             epic.setSubTasksIds(newSubTasks);
         }
@@ -143,6 +141,29 @@ public class InMemoryTaskManager implements TaskManager {
 
         subTasks.remove(id);
     }
+
+
+    @Override
+    public void deleteAllTasks() {
+        tasks.clear();
+    }
+
+
+    @Override
+    public void deleteAllEpics() {
+        for (Integer epicId : epics.keySet()) {
+            deleteEpic(epicId);
+        }
+    }
+
+
+    @Override
+    public void deleteAllSubTasks() {
+        for (Integer subTaskId : subTasks.keySet()) {
+            deleteSubTask(subTaskId);
+        }
+    }
+
 
     public ArrayList<SubTask> getEpicSubTasks(int epicId) {
         // Получение всех подзадач Эпика

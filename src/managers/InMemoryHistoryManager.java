@@ -1,6 +1,5 @@
 package managers;
 
-import history.HistoryManager;
 import task.Task;
 
 import java.util.ArrayList;
@@ -18,8 +17,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         history.add(task);
         if (history.size() > 10) {
             history.removeFirst();
-            history.removeLast();
-            history.addFirst(task);
         }
     }
 

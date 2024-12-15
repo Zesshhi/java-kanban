@@ -1,4 +1,6 @@
+import managers.HistoryManager;
 import managers.Managers;
+import managers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.*;
@@ -40,9 +42,9 @@ public class TaskManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        Managers managers = new Managers();
 
-        inMemoryTaskManager = managers.getDefault();
+        HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+        inMemoryTaskManager = Managers.getDefault(inMemoryHistoryManager);
         currentIdOfTask = 0;
 
     }
@@ -197,5 +199,36 @@ public class TaskManagerTest {
         inMemoryTaskManager.deleteSubTask(subTask.getId());
 
         assertNull(inMemoryTaskManager.getSubTask(subTask.getId()));
+    }
+
+
+    @Test
+    public void should_delete_all_tasks() {
+        for (int i = 0; i < 10; i++) {
+            Task task = createTask();
+        }
+        inMemoryTaskManager.deleteAllTasks();
+
+        assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+    }
+
+    public void should_delete_all_epics() {
+        for (int i = 0; i < 10; i++) {
+            Epic epic = createEpic();
+        }
+        inMemoryTaskManager.deleteAllEpics();
+
+        assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+    }
+
+    public void should_delete_all_subtasks() {
+        Epic epic = createEpic();
+        for (int i = 0; i < 10; i++) {
+            SubTask subTask = createSubTask(epic);
+        }
+        inMemoryTaskManager.deleteAllSubTasks();
+
+        assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+
     }
 }

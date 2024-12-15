@@ -1,11 +1,11 @@
-import history.HistoryManager;
+import managers.HistoryManager;
 import managers.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.SubTask;
 import task.Task;
-import task.TaskManager;
+import managers.TaskManager;
 
 import java.util.ArrayList;
 
@@ -19,10 +19,9 @@ public class HistoryManagerTest {
 
     @BeforeEach
     public void beforeEach() {
-        Managers managers = new Managers();
 
-        inMemoryTaskManager = managers.getDefault();
-        inMemoryHistoryManager = managers.getDefaultHistory();
+        inMemoryHistoryManager = Managers.getDefaultHistory();
+        inMemoryTaskManager = Managers.getDefault(inMemoryHistoryManager);
         currentIdOfTask = 0;
     }
 
@@ -77,16 +76,18 @@ public class HistoryManagerTest {
     }
 
     @Test
-    public void should_change_first_value_if_full() {
+    public void should_add_task_to_last_and_delete_first() {
         Task task = createTask();
         Epic epic = createEpic();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             inMemoryTaskManager.getTask(task.getId());
+            inMemoryTaskManager.getEpic(epic.getId());
         }
         inMemoryTaskManager.getEpic(epic.getId());
 
 
+        assertEquals(inMemoryHistoryManager.getHistory().getLast(), epic, "Задача не попала в историю");
         assertEquals(inMemoryHistoryManager.getHistory().getFirst(), epic, "Задача не попала в историю");
         assertEquals(10, inMemoryHistoryManager.getHistory().toArray().length);
     }

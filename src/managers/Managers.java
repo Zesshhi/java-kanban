@@ -1,22 +1,12 @@
 package managers;
 
-import history.HistoryManager;
-import task.TaskManager;
-
 public class Managers {
-    private static TaskManager taskManager;
-    private static HistoryManager historyManager;
 
-    public Managers() {
-        historyManager = new InMemoryHistoryManager();
-        taskManager = new InMemoryTaskManager(historyManager);
+    public static TaskManager getDefault(HistoryManager historyManager) {
+        return new InMemoryTaskManager(historyManager);
     }
 
-    public TaskManager getDefault() {
-        return taskManager;
-    }
-
-    public HistoryManager getDefaultHistory() {
-        return historyManager;
+    public static HistoryManager getDefaultHistory() {
+        return new InMemoryHistoryManager();
     }
 }

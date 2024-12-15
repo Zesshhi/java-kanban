@@ -1,4 +1,8 @@
-package task;
+package managers;
+
+import task.Epic;
+import task.SubTask;
+import task.Task;
 
 import java.util.List;
 
@@ -33,5 +37,11 @@ public interface TaskManager {
     List<Epic> getEpics();
 
     List<SubTask> getSubTasks();
+
+    void deleteAllTasks();
+
+    void deleteAllEpics();
+
+    void deleteAllSubTasks();
 
 }
