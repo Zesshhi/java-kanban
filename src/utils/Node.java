@@ -1,11 +1,11 @@
 package utils;
 
-public class Node <T>{
+public class Node<T> {
     private Node<T> previous;
     private Node<T> next;
     private T data;
 
-    public Node(T data, Node<T> previous, Node<T> next){
+    public Node(T data, Node<T> previous, Node<T> next) {
         this.data = data;
         this.previous = previous;
         this.next = next;
