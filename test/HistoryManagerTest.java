@@ -8,9 +8,9 @@ import task.Task;
 import managers.TaskManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HistoryManagerTest {
     static TaskManager inMemoryTaskManager;
@@ -73,28 +73,30 @@ public class HistoryManagerTest {
         inMemoryTaskManager.getSubTask(subTask.getId());
 
         assertEquals(inMemoryHistoryManager.getHistory().getLast(), subTask, "Задача не попала в историю");
+
     }
 
     @Test
-    public void should_add_task_to_last_and_delete_first() {
+    public void should_add_task_to_last_and_delete_if_exists() {
         Task task = createTask();
         Epic epic = createEpic();
 
-        for (int i = 0; i < 5; i++) {
-            inMemoryTaskManager.getTask(task.getId());
-            inMemoryTaskManager.getEpic(epic.getId());
-        }
+        List<Task> watchedHistory = new ArrayList<>();
+
+        inMemoryTaskManager.getTask(task.getId());
+
         inMemoryTaskManager.getEpic(epic.getId());
+        watchedHistory.add(epic);
 
+        inMemoryTaskManager.getTask(task.getId());
+        watchedHistory.add(task);
 
-        assertEquals(inMemoryHistoryManager.getHistory().getLast(), epic, "Задача не попала в историю");
-        assertEquals(inMemoryHistoryManager.getHistory().getFirst(), epic, "Задача не попала в историю");
-        assertEquals(10, inMemoryHistoryManager.getHistory().toArray().length);
+        assertArrayEquals(watchedHistory.toArray(), inMemoryHistoryManager.getHistory().toArray());
     }
 
 
     @Test
-    public void should_add_all_tasks_to_history() {
+    public void should_save_only_unique_tasks_to_history() {
         Task task = createTask();
         Epic epic = createEpic();
         SubTask subTask = createSubTask(epic);
@@ -104,16 +106,24 @@ public class HistoryManagerTest {
             inMemoryTaskManager.getTask(task.getId());
             inMemoryTaskManager.getEpic(epic.getId());
             inMemoryTaskManager.getSubTask(subTask.getId());
-            watchedHistory.add(task);
-            watchedHistory.add(epic);
-            watchedHistory.add(subTask);
         }
 
-        inMemoryTaskManager.getTask(task.getId());
         watchedHistory.add(task);
+        watchedHistory.add(epic);
+        watchedHistory.add(subTask);
 
         assertArrayEquals(watchedHistory.toArray(), inMemoryHistoryManager.getHistory().toArray());
     }
 
+    @Test
+    public void should_remove_task_from_history() {
+        Task task = createTask();
 
+        inMemoryTaskManager.getTask(task.getId());
+        assertEquals(inMemoryHistoryManager.getHistory().getLast(), task, "Задача не попала в историю");
+
+        inMemoryHistoryManager.remove(task.getId());
+
+        assertArrayEquals(new ArrayList<>().toArray(), inMemoryHistoryManager.getHistory().toArray());
+    }
 }
