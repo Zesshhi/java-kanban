@@ -3,7 +3,6 @@ package managers;
 import task.Task;
 import utils.Node;
 
-import java.sql.Array;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
