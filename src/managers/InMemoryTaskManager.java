@@ -171,13 +171,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllSubTasks() {
-        Iterator<Map.Entry<Integer, SubTask>> iterator = subTasks.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, SubTask> entry = iterator.next();
-            deleteSubTaskEpicConnection(entry.getValue().getEpicId(), entry.getValue().getId());
-            iterator.remove();
+        for (SubTask subtask : subTasks.values()) {
+            deleteSubTaskEpicConnection(subtask.getEpicId(), subtask.getId());
         }
+        subTasks.clear();
     }
 
 

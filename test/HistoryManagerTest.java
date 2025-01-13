@@ -1,4 +1,5 @@
 import managers.HistoryManager;
+import managers.InMemoryHistoryManager;
 import managers.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -125,5 +126,62 @@ public class HistoryManagerTest {
         inMemoryHistoryManager.remove(task.getId());
 
         assertArrayEquals(new ArrayList<>().toArray(), inMemoryHistoryManager.getHistory().toArray());
+    }
+
+    @Test
+    public void should_remove_from_beginning() {
+        List<Task> watchedHistory = new ArrayList<>();
+
+        Task task = createTask();
+        inMemoryTaskManager.getTask(task.getId());
+
+        Epic epic = createEpic();
+        inMemoryTaskManager.getEpic(epic.getId());
+        watchedHistory.add(epic);
+
+        inMemoryHistoryManager.remove(task.getId());
+
+        assertArrayEquals(watchedHistory.toArray(), inMemoryHistoryManager.getHistory().toArray());
+
+    }
+
+    @Test
+    public void should_remove_from_middle() {
+        List<Task> watchedHistory = new ArrayList<>();
+
+        Task task = createTask();
+        inMemoryTaskManager.getTask(task.getId());
+        watchedHistory.add(task);
+
+        Epic epic = createEpic();
+        inMemoryTaskManager.getEpic(epic.getId());
+
+        Task task2 = createTask();
+        inMemoryTaskManager.getTask(task2.getId());
+        watchedHistory.add(task2);
+
+        inMemoryHistoryManager.remove(epic.getId());
+
+        assertArrayEquals(watchedHistory.toArray(), inMemoryHistoryManager.getHistory().toArray());
+    }
+
+    @Test
+    public void should_remove_from_end() {
+        List<Task> watchedHistory = new ArrayList<>();
+
+        Task task = createTask();
+        inMemoryTaskManager.getTask(task.getId());
+        watchedHistory.add(task);
+
+        Epic epic = createEpic();
+        inMemoryTaskManager.getEpic(epic.getId());
+        watchedHistory.add(epic);
+
+        Task task2 = createTask();
+        inMemoryTaskManager.getTask(task2.getId());
+
+        inMemoryHistoryManager.remove(task2.getId());
+
+        assertArrayEquals(watchedHistory.toArray(), inMemoryHistoryManager.getHistory().toArray());
     }
 }

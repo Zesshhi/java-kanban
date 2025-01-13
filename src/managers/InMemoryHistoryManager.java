@@ -28,27 +28,28 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private void removeNode(Node<Task> node) {
-        Node<Task> nextNode = node.getNext();
-        Node<Task> previousNode = node.getPrevious();
+        if (node != null) {
+            Node<Task> nextNode = node.getNext();
+            Node<Task> previousNode = node.getPrevious();
 
-        history.remove(node.getData().getId());
+            history.remove(node.getData().getId());
 
-        node.setData(null);
+            node.setData(null);
 
-        if (node == head && node == tail) {
-            head = null;
-            tail = null;
-        } else if (node == head) {
-            head = nextNode;
-            nextNode.setPrevious(null);
-        } else if (node == tail) {
-            tail = previousNode;
-            previousNode.setNext(null);
-        } else {
-            previousNode.setNext(nextNode);
-            nextNode.setPrevious(previousNode);
+            if (node == head && node == tail) {
+                head = null;
+                tail = null;
+            } else if (node == head) {
+                head = nextNode;
+                nextNode.setPrevious(null);
+            } else if (node == tail) {
+                tail = previousNode;
+                previousNode.setNext(null);
+            } else {
+                previousNode.setNext(nextNode);
+                nextNode.setPrevious(previousNode);
+            }
         }
-
 
     }
 
