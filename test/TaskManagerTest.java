@@ -212,6 +212,7 @@ public class TaskManagerTest {
         assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
     }
 
+    @Test
     public void should_delete_all_epics() {
         for (int i = 0; i < 10; i++) {
             Epic epic = createEpic();
@@ -221,6 +222,8 @@ public class TaskManagerTest {
         assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
     }
 
+
+    @Test
     public void should_delete_all_subtasks() {
         Epic epic = createEpic();
         for (int i = 0; i < 10; i++) {
