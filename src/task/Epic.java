@@ -2,6 +2,7 @@ package task;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Epic extends Task {
 
@@ -11,6 +12,11 @@ public class Epic extends Task {
         super(name, description, id);
         this.subTasksIds = subTasksIds;
         this.taskStatus = getTaskStatus();
+    }
+
+    public Epic(int id, String name, TaskStatuses taskStatus, String description, List<Integer> subTasksIds) {
+        super(id, name, taskStatus, description);
+        this.subTasksIds = subTasksIds;
     }
 
     public List<Integer> getSubTasksIds() {
@@ -47,6 +53,24 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return ("id=" + getId() + " name=" + getName() + " description=" + getDescription() + " taskStatus=" + taskStatus + " subTasksIds=" + getSubTasksIds());
+        return String.format("%s,%s,%s,%s,%s", getId(), getClass().getSimpleName(), getName(), taskStatus, getDescription());
+    }
+
+    public static Epic fromString(String[] taskData) {
+        return new Epic(Integer.parseInt(taskData[0]), taskData[2], TaskStatuses.valueOf(taskData[3]), taskData[4], new ArrayList<>(0));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Epic epic = (Epic) o;
+        if (id == epic.id) return true;
+        return Objects.equals(name, epic.name) && taskStatus == epic.taskStatus && Objects.equals(description, epic.description) && subTasksIds == epic.subTasksIds;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, taskStatus, description, subTasksIds);
     }
 }
