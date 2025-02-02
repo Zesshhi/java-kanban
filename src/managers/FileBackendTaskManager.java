@@ -39,12 +39,13 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
             }
 
         } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка работы менеджера", tasksFile);
+            throw new ManagerSaveException("Ошибка работы менеджера", exception, tasksFile);
         }
     }
 
     public static FileBackendTaskManager loadFromFile(File file) {
         FileBackendTaskManager fileManager = new FileBackendTaskManager();
+        int currentIdOfTask = 0;
 
         try (FileReader reader = new FileReader(file); BufferedReader bufferedReader = new BufferedReader(reader)) {
             while (bufferedReader.ready()) {
@@ -53,14 +54,20 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
                     String[] taskData = line.split(",");
                     switch (TaskTypes.valueOf(taskData[1].toUpperCase())) {
                         case TaskTypes.TASK:
+                            currentIdOfTask++;
+                            taskData[0] = String.valueOf(currentIdOfTask);
                             Task task = Task.fromString(taskData);
                             fileManager.createTask(task);
                             continue;
                         case TaskTypes.EPIC:
+                            currentIdOfTask++;
+                            taskData[0] = String.valueOf(currentIdOfTask);
                             Epic epic = Epic.fromString(taskData);
                             fileManager.createEpic(epic);
                             continue;
                         case TaskTypes.SUBTASK:
+                            currentIdOfTask++;
+                            taskData[0] = String.valueOf(currentIdOfTask);
                             SubTask subTask = SubTask.fromString(taskData);
                             fileManager.createSubTask(subTask);
                             continue;
@@ -72,7 +79,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
             }
             return fileManager;
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка работы менеджера", file);
+            throw new ManagerSaveException("Ошибка работы менеджера", e, file);
         }
     }
 

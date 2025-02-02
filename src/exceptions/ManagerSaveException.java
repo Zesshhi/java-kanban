@@ -20,13 +20,13 @@ public class ManagerSaveException extends RuntimeException {
         super(cause);
     }
 
-    public ManagerSaveException(String message, File managerFile) {
-        super(message);
+    public ManagerSaveException(String message, final Throwable cause, File managerFile) {
+        super(message, cause);
         this.managerFile = managerFile;
     }
 
     public String getDetailMessage() {
-        return String.format("%s файл: %s", getMessage(), managerFile.getName());
+        return "%s файл: %s".formatted(getMessage(), managerFile.getName());
     }
 
 }

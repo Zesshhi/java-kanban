@@ -133,7 +133,7 @@ public class FileBackendTaskManagerTest {
 
 
         } catch (IOException exception) {
-            throw new ManagerSaveException("Ошибка работы менеджера", temporaryFile);
+            throw new ManagerSaveException("Ошибка работы менеджера", exception, temporaryFile);
         }
 
         FileBackendTaskManager temporaryFileManager = FileBackendTaskManager.loadFromFile(temporaryFile);
