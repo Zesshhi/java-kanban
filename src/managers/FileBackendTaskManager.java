@@ -2,6 +2,8 @@ package managers;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.stream.Stream;
 
 import exceptions.ManagerSaveException;
 import task.Task;
@@ -28,15 +30,14 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
         try (FileWriter writer = new FileWriter(tasksFile, StandardCharsets.UTF_8)) {
             writer.write(header + "\n");
 
-            for (Task task : super.getTasks()) {
-                writer.write(task.toString() + "\n");
-            }
-            for (Epic epic : super.getEpics()) {
-                writer.write(epic.toString() + "\n");
-            }
-            for (SubTask subTask : super.getSubTasks()) {
-                writer.write(subTask.toString() + "\n");
-            }
+            Stream.of(super.getTasks(), super.getEpics(), super.getSubTasks()).flatMap(Collection::stream)
+                    .forEach(task -> {
+                        try {
+                            writer.write(task.toString() + "\n");
+                        } catch (IOException e) {
+                            throw new RuntimeException("Ошибка записи в файл", e);
+                        }
+                    });
 
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка работы менеджера", exception, tasksFile);

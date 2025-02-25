@@ -1,5 +1,7 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -7,12 +9,25 @@ public class Task {
     protected String description;
     protected int id;
     protected TaskStatuses taskStatus;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(String name, String description, int id) {
+    public Task(String name, String description, int id, Duration duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.id = id;
+        this.duration = duration;
+        this.startTime = startTime;
         taskStatus = TaskStatuses.NEW;
+    }
+
+    public Task(int id, String name, TaskStatuses taskStatus, String description, Duration duration, LocalDateTime startTime) {
+        this.id = id;
+        this.name = name;
+        this.taskStatus = taskStatus;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public Task(int id, String name, TaskStatuses taskStatus, String description) {
@@ -50,13 +65,40 @@ public class Task {
         this.taskStatus = taskStatus;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s", getId(), getClass().getSimpleName(), getName(), getTaskStatus(), getDescription());
+        return String.format("%s,%s,%s,%s,%s,%s,%s", getId(), getClass().getSimpleName(), getName(), getTaskStatus(), getDescription(), getDuration(), getStartTime());
     }
 
     public static Task fromString(String[] taskData) {
-        return new Task(Integer.parseInt(taskData[0]), taskData[2], TaskStatuses.valueOf(taskData[3]), taskData[4]);
+        return new Task(
+                Integer.parseInt(taskData[0]),
+                taskData[2],
+                TaskStatuses.valueOf(taskData[3]),
+                taskData[4],
+                Duration.parse(taskData[5]),
+                LocalDateTime.parse(taskData[6])
+        );
     }
 
     @Override
@@ -65,7 +107,7 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         if (id == task.id) return true;
-        return Objects.equals(name, task.name) && taskStatus == task.taskStatus && Objects.equals(description, task.description);
+        return Objects.equals(name, task.name) && taskStatus == task.taskStatus && Objects.equals(description, task.description) && duration.equals(task.duration) && startTime.equals(task.startTime);
     }
 
     @Override

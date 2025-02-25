@@ -1,5 +1,4 @@
 import managers.HistoryManager;
-import managers.InMemoryHistoryManager;
 import managers.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,10 +12,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HistoryManagerTest {
+public class InMemoryHistoryManagerTest extends TaskManagerTest {
     static TaskManager inMemoryTaskManager;
     static HistoryManager inMemoryHistoryManager;
-    static int currentIdOfTask;
 
     @BeforeEach
     public void beforeEach() {
@@ -26,27 +24,28 @@ public class HistoryManagerTest {
         currentIdOfTask = 0;
     }
 
+
+    @Override
     public Task createTask() {
-        currentIdOfTask++;
-        Task task = new Task("Task 1", "Task description 1", currentIdOfTask);
+        Task task = super.createTask();
         inMemoryTaskManager.createTask(task);
         return task;
     }
 
+    @Override
     public Epic createEpic() {
-        currentIdOfTask++;
-        Epic epic = new Epic("Epic 1", "Epic description 1", currentIdOfTask, new ArrayList<>(0));
+        Epic epic = super.createEpic();
         inMemoryTaskManager.createEpic(epic);
         return epic;
     }
 
+    @Override
     public SubTask createSubTask(Epic epic) {
-        currentIdOfTask++;
-        SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId());
+        SubTask subTask = super.createSubTask(epic);
         inMemoryTaskManager.createSubTask(subTask);
-
         return subTask;
     }
+
 
     @Test
     public void should_add_task_to_history() {

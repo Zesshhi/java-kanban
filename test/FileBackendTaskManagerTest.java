@@ -1,5 +1,6 @@
 import exceptions.ManagerSaveException;
 import managers.FileBackendTaskManager;
+import managers.TaskManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,32 +14,30 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileBackendTaskManagerTest {
+public class FileBackendTaskManagerTest extends TaskManagerTest {
     static FileBackendTaskManager fileManager;
-    static int currentIdOfTask;
 
     File temporaryFile;
 
 
+    @Override
     public Task createTask() {
-        currentIdOfTask++;
-        Task task = new Task("Task 1", "Task description 1", currentIdOfTask);
+        Task task = super.createTask();
         fileManager.createTask(task);
         return task;
     }
 
+    @Override
     public Epic createEpic() {
-        currentIdOfTask++;
-        Epic epic = new Epic("Epic 1", "Epic description 1", currentIdOfTask, new ArrayList<>(0));
+        Epic epic = super.createEpic();
         fileManager.createEpic(epic);
         return epic;
     }
 
+    @Override
     public SubTask createSubTask(Epic epic) {
-        currentIdOfTask++;
-        SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId());
+        SubTask subTask = super.createSubTask(epic);
         fileManager.createSubTask(subTask);
-
         return subTask;
     }
 
