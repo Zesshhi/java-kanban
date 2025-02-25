@@ -141,11 +141,15 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
         SubTask subTask = createSubTask(epic);
         ArrayList<Integer> subTasks = new ArrayList<>(1);
+        ArrayList<SubTask> subTasksData = new ArrayList<>(1);
         subTasks.add(subTask.getId());
+        subTasksData.add(subTask);
 
         epic.setName("Updated Task 1 Name");
         epic.setDescription("Updated Task 1 description");
-        epic.setSubTasksIds(subTasks);
+        epic.setSubTasksIds(new ArrayList<>(1));
+
+        epic.setEndTime(subTasksData);
 
         inMemoryTaskManager.updateEpic(epic);
 

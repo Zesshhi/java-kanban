@@ -62,8 +62,18 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+    public void setEndTime(List<SubTask> subTasks) {
+        if (subTasks.size() == 0)
+            this.endTime = LocalDateTime.now();
+        else {
+            for (SubTask subTask : subTasks) {
+                LocalDateTime subTaskEndTime = subTask.getEndTime();
+                if (endTime == null || endTime.isBefore(subTaskEndTime)) {
+                    endTime = subTaskEndTime;
+                }
+            }
+
+        }
     }
 
     @Override
