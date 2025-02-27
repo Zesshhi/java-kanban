@@ -35,7 +35,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
                         try {
                             writer.write(task.toString() + "\n");
                         } catch (IOException e) {
-                            throw new RuntimeException("Ошибка записи в файл", e);
+                            throw new ManagerSaveException("Ошибка записи в файл", e);
                         }
                     });
 

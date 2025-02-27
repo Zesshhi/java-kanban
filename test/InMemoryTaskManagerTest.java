@@ -1,20 +1,49 @@
 import managers.HistoryManager;
 import managers.InMemoryTaskManager;
 import managers.Managers;
-import managers.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import task.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest {
 
-    static TaskManager inMemoryTaskManager;
+    static InMemoryTaskManager inMemoryTaskManager;
+
+    @Override
+    public Task createTaskWithInputDate(LocalDateTime inputDate) {
+        Task task = super.createTaskWithInputDate(inputDate);
+        inMemoryTaskManager.createTask(task);
+        return task;
+    }
+
+    @Override
+    public Epic createEpicWithInputDate(LocalDateTime inputDate) {
+        Epic epic = super.createEpicWithInputDate(inputDate);
+        inMemoryTaskManager.createEpic(epic);
+        return epic;
+    }
+
+    @Override
+    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) {
+        SubTask subTask = super.createSubTaskWithInputDate(epic, inputDate);
+        inMemoryTaskManager.createSubTask(subTask);
+        return subTask;
+    }
 
     @Override
     public Task createTask() {
@@ -68,17 +97,17 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
         Epic epic = createEpic();
         SubTask subTask = createSubTask(epic);
 
-        SubTask createdSubTask = inMemoryTaskManager.getSubTask(currentIdOfTask);
+        SubTask createdSubTask = inMemoryTaskManager.getSubTask(subTask.getId());
         assertEquals(subTask, createdSubTask, "Задача не создалась");
     }
 
     @Test
     public void should_return_list_of_tasks() {
-        Task task1 = createTask();
+        Task task1 = createTaskWithInputDate(LocalDateTime.now().minusDays(1));
 
-        Task task2 = createTask();
+        Task task2 = createTaskWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Task task3 = createTask();
+        Task task3 = createTaskWithInputDate(LocalDateTime.now().minusDays(3));
 
         List<Task> createdTasks = new ArrayList<>(3);
         createdTasks.add(task1);
@@ -90,11 +119,11 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_return_list_of_epics() {
-        Epic epic1 = createEpic();
+        Epic epic1 = createEpicWithInputDate(LocalDateTime.now().minusDays(1));
 
-        Epic epic2 = createEpic();
+        Epic epic2 = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic epic3 = createEpic();
+        Epic epic3 = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
         List<Epic> createdEpics = new ArrayList<>(3);
         createdEpics.add(epic1);
@@ -108,11 +137,11 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     public void should_return_list_of_subtasks() {
         Epic mainEpic = createEpic();
 
-        SubTask subTask1 = createSubTask(mainEpic);
+        SubTask subTask1 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(1));
 
-        SubTask subTask2 = createSubTask(mainEpic);
+        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
 
-        SubTask subTask3 = createSubTask(mainEpic);
+        SubTask subTask3 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
         List<SubTask> createdSubTasks = new ArrayList<>(3);
         createdSubTasks.add(subTask1);
@@ -158,12 +187,12 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_update_subtasks_and_update_epic_task_status_and_return_done() {
-        Epic mainEpic = createEpic();
+        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic newEpic = createEpic();
+        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
-        SubTask subTask = createSubTask(mainEpic);
-        SubTask subTask2 = createSubTask(mainEpic);
+        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
         subTask.setName("SubTask Updated Name 1");
         subTask.setDescription("SubTask Updated Description 1");
@@ -180,12 +209,12 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_update_subtasks_and_update_epic_task_status_in_progress() {
-        Epic mainEpic = createEpic();
+        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic newEpic = createEpic();
+        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
-        SubTask subTask = createSubTask(mainEpic);
-        SubTask subTask2 = createSubTask(mainEpic);
+        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
         subTask.setName("SubTask Updated Name 1");
         subTask.setDescription("SubTask Updated Description 1");
@@ -201,12 +230,12 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_update_subtasks_and_update_epic_task_status_and_return_new() {
-        Epic mainEpic = createEpic();
+        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic newEpic = createEpic();
+        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
-        SubTask subTask = createSubTask(mainEpic);
-        SubTask subTask2 = createSubTask(mainEpic);
+        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
         subTask.setName("SubTask Updated Name 1");
         subTask.setDescription("SubTask Updated Description 1");
@@ -223,11 +252,11 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_update_subtask_and_update_epic_task_status_and_return_in_progress() {
-        Epic mainEpic = createEpic();
+        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(1));
 
-        Epic newEpic = createEpic();
+        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        SubTask subTask = createSubTask(mainEpic);
+        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
         subTask.setName("SubTask Updated Name 1");
         subTask.setDescription("SubTask Updated Description 1");
@@ -301,15 +330,32 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
         assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
     }
 
-    @Test
-    public void should_not_add_overlap_task() {
-        Task task = super.createTaskWithSameDate();
-        Task task2 = super.createTaskWithSameDate();
+    private static Task createTaskWithInputDate(Integer currentIdOfTask, LocalDateTime inputDate, int inputDuration) {
+        return new Task("Task 1", "Task description 1", currentIdOfTask, Duration.ofSeconds(inputDuration), inputDate);
+    }
 
-        InMemoryTaskManager taskManager = (InMemoryTaskManager) inMemoryTaskManager;
-        taskManager.createTask(task);
-        taskManager.createTask(task2);
-        System.out.println(taskManager.getPrioritizedTasks());
-        assertEquals(1, taskManager.getPrioritizedTasks().size());
+
+    private static Stream<Arguments> tasksWithSameDates() {
+        LocalDateTime currentDate = LocalDateTime.now();
+        return Stream.of(
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusSeconds(5), 10)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 55), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)),
+
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 150), createTaskWithInputDate(currentIdOfTask++, currentDate, 600)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate.minusSeconds(50), 50), createTaskWithInputDate(currentIdOfTask++, currentDate, 10))
+        );
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("tasksWithSameDates")
+    public void should_not_add_overlap_task(Task task, Task task2) {
+
+        inMemoryTaskManager.createTask(task);
+        inMemoryTaskManager.createTask(task2);
+
+        assertEquals(1, inMemoryTaskManager.getPrioritizedTasks().size());
+        assertEquals(1, inMemoryTaskManager.getTasks().size());
     }
 }

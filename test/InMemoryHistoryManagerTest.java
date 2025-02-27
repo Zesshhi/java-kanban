@@ -1,4 +1,5 @@
 import managers.HistoryManager;
+import managers.InMemoryTaskManager;
 import managers.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,13 +8,14 @@ import task.SubTask;
 import task.Task;
 import managers.TaskManager;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryHistoryManagerTest extends TaskManagerTest {
-    static TaskManager inMemoryTaskManager;
+    static InMemoryTaskManager inMemoryTaskManager;
     static HistoryManager inMemoryHistoryManager;
 
     @BeforeEach
@@ -22,6 +24,27 @@ public class InMemoryHistoryManagerTest extends TaskManagerTest {
         inMemoryHistoryManager = Managers.getDefaultHistory();
         inMemoryTaskManager = Managers.getDefault(inMemoryHistoryManager);
         currentIdOfTask = 0;
+    }
+
+    @Override
+    public Task createTaskWithInputDate(LocalDateTime inputDate) {
+        Task task = super.createTaskWithInputDate(inputDate);
+        inMemoryTaskManager.createTask(task);
+        return task;
+    }
+
+    @Override
+    public Epic createEpicWithInputDate(LocalDateTime inputDate) {
+        Epic epic = super.createEpicWithInputDate(inputDate);
+        inMemoryTaskManager.createEpic(epic);
+        return epic;
+    }
+
+    @Override
+    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) {
+        SubTask subTask = super.createSubTaskWithInputDate(epic, inputDate);
+        inMemoryTaskManager.createSubTask(subTask);
+        return subTask;
     }
 
 
@@ -99,7 +122,7 @@ public class InMemoryHistoryManagerTest extends TaskManagerTest {
     public void should_save_only_unique_tasks_to_history() {
         Task task = createTask();
         Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
+        SubTask subTask = createSubTaskWithInputDate(epic, LocalDateTime.now().minusDays(1));
         ArrayList<Task> watchedHistory = new ArrayList<>(10);
 
         for (int i = 0; i < 3; i++) {
@@ -148,14 +171,14 @@ public class InMemoryHistoryManagerTest extends TaskManagerTest {
     public void should_remove_from_middle() {
         List<Task> watchedHistory = new ArrayList<>();
 
-        Task task = createTask();
+        Task task = createTaskWithInputDate(LocalDateTime.now().minusDays(1));
         inMemoryTaskManager.getTask(task.getId());
         watchedHistory.add(task);
 
         Epic epic = createEpic();
         inMemoryTaskManager.getEpic(epic.getId());
 
-        Task task2 = createTask();
+        Task task2 = createTaskWithInputDate(LocalDateTime.now().minusDays(2));
         inMemoryTaskManager.getTask(task2.getId());
         watchedHistory.add(task2);
 
