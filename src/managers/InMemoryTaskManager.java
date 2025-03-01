@@ -37,7 +37,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private boolean isTimeOverlap(Task task) {
-        return sortedTasks.stream().anyMatch(t -> (t.getStartTime().equals(task.getEndTime()) || t.getStartTime().isBefore(task.getEndTime())) && (task.getStartTime().isBefore(t.getEndTime()) || task.getStartTime().equals(t.getEndTime())));
+        return sortedTasks.stream().anyMatch(t -> !t.equals(task) && (t.getStartTime().equals(task.getEndTime()) || t.getStartTime().isBefore(task.getEndTime())) && (task.getStartTime().isBefore(t.getEndTime()) || task.getStartTime().equals(t.getEndTime())));
     }
 
     @Override

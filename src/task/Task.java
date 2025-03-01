@@ -107,7 +107,7 @@ public class Task {
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
         if (id == task.id) return true;
-        return Objects.equals(name, task.name) && taskStatus == task.taskStatus && Objects.equals(description, task.description) && duration.equals(task.duration) && startTime.equals(task.startTime);
+        return Objects.equals(id, task.id) && Objects.equals(name, task.name) && taskStatus == task.taskStatus && Objects.equals(description, task.description) && duration.equals(task.duration) && startTime.equals(task.startTime);
     }
 
     @Override

@@ -100,7 +100,7 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         Epic epic = (Epic) o;
         if (id == epic.id) return true;
-        return Objects.equals(name, epic.name) && taskStatus == epic.taskStatus && Objects.equals(description, epic.description) && subTasksIds == epic.subTasksIds && duration.equals(epic.duration) && startTime.equals(epic.startTime);
+        return Objects.equals(id, epic.id) && Objects.equals(name, epic.name) && taskStatus == epic.taskStatus && Objects.equals(description, epic.description) && subTasksIds == epic.subTasksIds && duration.equals(epic.duration) && startTime.equals(epic.startTime);
     }
 
     @Override
