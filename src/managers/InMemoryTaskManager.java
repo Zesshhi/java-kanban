@@ -36,10 +36,8 @@ public class InMemoryTaskManager implements TaskManager {
         return sortedTasks.stream().toList();
     }
 
-    public boolean isTimeOverlap(Task task) {
-        if (!sortedTasks.isEmpty())
-            return sortedTasks.stream().allMatch(t -> (t.getStartTime().equals(task.getEndTime()) || t.getStartTime().isBefore(task.getEndTime())) && (task.getStartTime().isBefore(t.getEndTime()) || task.getStartTime().equals(t.getEndTime())));
-        return false;
+    private boolean isTimeOverlap(Task task) {
+        return sortedTasks.stream().anyMatch(t -> (t.getStartTime().equals(task.getEndTime()) || t.getStartTime().isBefore(task.getEndTime())) && (task.getStartTime().isBefore(t.getEndTime()) || task.getStartTime().equals(t.getEndTime())));
     }
 
     @Override
@@ -138,6 +136,9 @@ public class InMemoryTaskManager implements TaskManager {
             updateTaskInTreeSet(oldTask, task);
         } else if (task.getStartTime() == null) {
             tasks.replace(task.getId(), task);
+        } else if (isTimeOverlap(task)) {
+            tasks.remove(oldTask.getId());
+            sortedTasks.remove(oldTask);
         }
     }
 
@@ -157,6 +158,7 @@ public class InMemoryTaskManager implements TaskManager {
             updateTaskInTreeSet(oldSubTask, subTask);
         } else if (subTask.getStartTime() == null) {
             replaceSubTask(oldSubTask, subTask);
+            sortedTasks.remove(oldSubTask);
         }
     }
 
