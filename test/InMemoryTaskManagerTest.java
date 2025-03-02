@@ -372,11 +372,13 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
         inMemoryTaskManager.createTask(task1);
         inMemoryTaskManager.createTask(task2);
 
-        task1.setStartTime(inputDate);
-        task1.setDuration(Duration.ofSeconds(inputDuration));
-        inMemoryTaskManager.updateTask(task1);
+        Task updatedTask = new Task(task1.getId(), "Task 1", task1.getTaskStatus(), "Updated task description 1", Duration.ofSeconds(inputDuration), inputDate);
 
-        assertEquals(1, inMemoryTaskManager.getPrioritizedTasks().size());
-        assertEquals(1, inMemoryTaskManager.getTasks().size());
+        inMemoryTaskManager.updateTask(updatedTask);
+
+        assertEquals(2, inMemoryTaskManager.getPrioritizedTasks().size());
+        assertEquals(2, inMemoryTaskManager.getTasks().size());
+
+        assertNotEquals(inMemoryTaskManager.getTask(task1.getId()).getStartTime(), updatedTask.getStartTime());
     }
 }

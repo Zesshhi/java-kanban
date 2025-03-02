@@ -136,9 +136,6 @@ public class InMemoryTaskManager implements TaskManager {
             updateTaskInTreeSet(oldTask, task);
         } else if (task.getStartTime() == null) {
             tasks.replace(task.getId(), task);
-        } else if (isTimeOverlap(task)) {
-            tasks.remove(oldTask.getId());
-            sortedTasks.remove(oldTask);
         }
     }
 
