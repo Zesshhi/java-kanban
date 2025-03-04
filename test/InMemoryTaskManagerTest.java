@@ -337,9 +337,12 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     private static Stream<Arguments> tasksWithSameDates() {
         LocalDateTime currentDate = LocalDateTime.now();
-        return Stream.of(Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusSeconds(5), 10)), Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 55), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)), Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)),
-
-                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 150), createTaskWithInputDate(currentIdOfTask++, currentDate, 600)), Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate.minusSeconds(50), 50), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)));
+        return Stream.of(
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusSeconds(5), 10)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 55), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 150), createTaskWithInputDate(currentIdOfTask++, currentDate, 600)),
+                Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate.minusSeconds(50), 51), createTaskWithInputDate(currentIdOfTask++, currentDate, 10)));
     }
 
     private static Stream<Arguments> updatedTasksWithSameDates() {
@@ -350,7 +353,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
                         Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusDays(1), 10), currentDate.plusDays(1), 55),
                         Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusDays(1), 10), currentDate.plusDays(1), 10),
                         Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusDays(1), 10), currentDate.plusDays(1), 150),
-                        Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusDays(1), 10), currentDate.plusDays(1).minusSeconds(50), 50)
+                        Arguments.of(createTaskWithInputDate(currentIdOfTask++, currentDate, 10), createTaskWithInputDate(currentIdOfTask++, currentDate.plusDays(1), 10), currentDate.plusDays(1).minusSeconds(50), 51)
                 );
     }
 
@@ -380,5 +383,26 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
         assertEquals(2, inMemoryTaskManager.getTasks().size());
 
         assertNotEquals(inMemoryTaskManager.getTask(task1.getId()).getStartTime(), updatedTask.getStartTime());
+    }
+
+    @Test
+    public void should_updated_tasks() {
+        LocalDateTime now = LocalDateTime.now();
+        Task task1 = new Task(1, "Task 1", TaskStatuses.NEW, "Task description 1", Duration.ofDays(1), now);
+        inMemoryTaskManager.createTask(task1);
+        Task task2 = new Task(2, "Task 2", TaskStatuses.NEW, "Task description 2", Duration.ofDays(1), now.plusDays(1));
+        inMemoryTaskManager.createTask(task2);
+
+        LocalDateTime newStartDate = now.minusHours(1);
+        Duration newDuration = Duration.ofDays(1);
+        Task taskToUpdate = new Task(task1.getId(), "Task 1", task1.getTaskStatus(), "Updated task description 1", newDuration, newStartDate);
+
+        inMemoryTaskManager.updateTask(taskToUpdate);
+        Task updatedTask = inMemoryTaskManager.getTask(task1.getId());
+
+        assertEquals(2, inMemoryTaskManager.getPrioritizedTasks().size());
+        assertEquals(2, inMemoryTaskManager.getTasks().size());
+        assertEquals(newStartDate, updatedTask.getStartTime());
+        assertEquals(newDuration, updatedTask.getDuration());
     }
 }
