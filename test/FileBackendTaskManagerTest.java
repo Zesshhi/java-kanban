@@ -10,35 +10,55 @@ import task.Task;
 import task.TaskTypes;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileBackendTaskManagerTest {
+public class FileBackendTaskManagerTest extends TaskManagerTest {
     static FileBackendTaskManager fileManager;
-    static int currentIdOfTask;
 
     File temporaryFile;
 
-
-    public Task createTask() {
-        currentIdOfTask++;
-        Task task = new Task("Task 1", "Task description 1", currentIdOfTask);
+    @Override
+    public Task createTaskWithInputDate(LocalDateTime inputDate) {
+        Task task = super.createTaskWithInputDate(inputDate);
         fileManager.createTask(task);
         return task;
     }
 
-    public Epic createEpic() {
-        currentIdOfTask++;
-        Epic epic = new Epic("Epic 1", "Epic description 1", currentIdOfTask, new ArrayList<>(0));
+    @Override
+    public Epic createEpicWithInputDate(LocalDateTime inputDate) {
+        Epic epic = super.createEpicWithInputDate(inputDate);
         fileManager.createEpic(epic);
         return epic;
     }
 
-    public SubTask createSubTask(Epic epic) {
-        currentIdOfTask++;
-        SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId());
+    @Override
+    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) {
+        SubTask subTask = super.createSubTaskWithInputDate(epic, inputDate);
         fileManager.createSubTask(subTask);
+        return subTask;
+    }
 
+
+    @Override
+    public Task createTask() {
+        Task task = super.createTask();
+        fileManager.createTask(task);
+        return task;
+    }
+
+    @Override
+    public Epic createEpic() {
+        Epic epic = super.createEpic();
+        fileManager.createEpic(epic);
+        return epic;
+    }
+
+    @Override
+    public SubTask createSubTask(Epic epic) {
+        SubTask subTask = super.createSubTask(epic);
+        fileManager.createSubTask(subTask);
         return subTask;
     }
 
@@ -62,15 +82,15 @@ public class FileBackendTaskManagerTest {
 
     @Test
     public void check_if_all_tasks_saved_in_file() {
-        Task task1 = createTask();
-        Task task2 = createTask();
+        Task task1 = createTaskWithInputDate(LocalDateTime.now().minusDays(1));
+        Task task2 = createTaskWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic epic1 = createEpic();
-        Epic epic2 = createEpic();
+        Epic epic1 = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
+        Epic epic2 = createEpicWithInputDate(LocalDateTime.now().minusDays(4));
 
-        SubTask subTask1 = createSubTask(epic1);
-        SubTask subTask2 = createSubTask(epic1);
-        SubTask subTask3 = createSubTask(epic2);
+        SubTask subTask1 = createSubTaskWithInputDate(epic1, LocalDateTime.now().minusDays(5));
+        SubTask subTask2 = createSubTaskWithInputDate(epic1, LocalDateTime.now().minusDays(6));
+        SubTask subTask3 = createSubTaskWithInputDate(epic2, LocalDateTime.now().minusDays(7));
 
         List<Task> tasksList = new ArrayList<>();
         tasksList.add(task1);
@@ -119,8 +139,8 @@ public class FileBackendTaskManagerTest {
 
         Epic epic1 = createEpic();
 
-        SubTask subTask1 = createSubTask(epic1);
-        SubTask subTask2 = createSubTask(epic1);
+        SubTask subTask1 = createSubTaskWithInputDate(epic1, LocalDateTime.now().minusDays(2));
+        SubTask subTask2 = createSubTaskWithInputDate(epic1, LocalDateTime.now().minusDays(3));
 
         try (FileWriter writer = new FileWriter(temporaryFile)) {
 

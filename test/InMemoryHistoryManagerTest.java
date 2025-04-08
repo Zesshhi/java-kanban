@@ -1,22 +1,21 @@
 import managers.HistoryManager;
-import managers.InMemoryHistoryManager;
+import managers.InMemoryTaskManager;
 import managers.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.SubTask;
 import task.Task;
-import managers.TaskManager;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HistoryManagerTest {
-    static TaskManager inMemoryTaskManager;
+public class InMemoryHistoryManagerTest extends TaskManagerTest {
+    static InMemoryTaskManager inMemoryTaskManager;
     static HistoryManager inMemoryHistoryManager;
-    static int currentIdOfTask;
 
     @BeforeEach
     public void beforeEach() {
@@ -26,27 +25,49 @@ public class HistoryManagerTest {
         currentIdOfTask = 0;
     }
 
-    public Task createTask() {
-        currentIdOfTask++;
-        Task task = new Task("Task 1", "Task description 1", currentIdOfTask);
+    @Override
+    public Task createTaskWithInputDate(LocalDateTime inputDate) {
+        Task task = super.createTaskWithInputDate(inputDate);
         inMemoryTaskManager.createTask(task);
         return task;
     }
 
-    public Epic createEpic() {
-        currentIdOfTask++;
-        Epic epic = new Epic("Epic 1", "Epic description 1", currentIdOfTask, new ArrayList<>(0));
+    @Override
+    public Epic createEpicWithInputDate(LocalDateTime inputDate) {
+        Epic epic = super.createEpicWithInputDate(inputDate);
         inMemoryTaskManager.createEpic(epic);
         return epic;
     }
 
-    public SubTask createSubTask(Epic epic) {
-        currentIdOfTask++;
-        SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId());
+    @Override
+    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) {
+        SubTask subTask = super.createSubTaskWithInputDate(epic, inputDate);
         inMemoryTaskManager.createSubTask(subTask);
-
         return subTask;
     }
+
+
+    @Override
+    public Task createTask() {
+        Task task = super.createTask();
+        inMemoryTaskManager.createTask(task);
+        return task;
+    }
+
+    @Override
+    public Epic createEpic() {
+        Epic epic = super.createEpic();
+        inMemoryTaskManager.createEpic(epic);
+        return epic;
+    }
+
+    @Override
+    public SubTask createSubTask(Epic epic) {
+        SubTask subTask = super.createSubTask(epic);
+        inMemoryTaskManager.createSubTask(subTask);
+        return subTask;
+    }
+
 
     @Test
     public void should_add_task_to_history() {
@@ -100,7 +121,7 @@ public class HistoryManagerTest {
     public void should_save_only_unique_tasks_to_history() {
         Task task = createTask();
         Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
+        SubTask subTask = createSubTaskWithInputDate(epic, LocalDateTime.now().minusDays(1));
         ArrayList<Task> watchedHistory = new ArrayList<>(10);
 
         for (int i = 0; i < 3; i++) {
@@ -149,14 +170,14 @@ public class HistoryManagerTest {
     public void should_remove_from_middle() {
         List<Task> watchedHistory = new ArrayList<>();
 
-        Task task = createTask();
+        Task task = createTaskWithInputDate(LocalDateTime.now().minusDays(1));
         inMemoryTaskManager.getTask(task.getId());
         watchedHistory.add(task);
 
         Epic epic = createEpic();
         inMemoryTaskManager.getEpic(epic.getId());
 
-        Task task2 = createTask();
+        Task task2 = createTaskWithInputDate(LocalDateTime.now().minusDays(2));
         inMemoryTaskManager.getTask(task2.getId());
         watchedHistory.add(task2);
 
