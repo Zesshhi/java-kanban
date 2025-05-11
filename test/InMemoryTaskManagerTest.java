@@ -1,3 +1,5 @@
+import exceptions.InvalidDataException;
+import exceptions.NotFoundException;
 import managers.HistoryManager;
 import managers.InMemoryTaskManager;
 import managers.Managers;
@@ -25,7 +27,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     static InMemoryTaskManager inMemoryTaskManager;
 
     @Override
-    public Task createTaskWithInputDate(LocalDateTime inputDate) {
+    public Task createTaskWithInputDate(LocalDateTime inputDate) throws InvalidDataException {
         Task task = super.createTaskWithInputDate(inputDate);
         inMemoryTaskManager.createTask(task);
         return task;
@@ -39,14 +41,14 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     }
 
     @Override
-    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) {
+    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) throws InvalidDataException {
         SubTask subTask = super.createSubTaskWithInputDate(epic, inputDate);
         inMemoryTaskManager.createSubTask(subTask);
         return subTask;
     }
 
     @Override
-    public Task createTask() {
+    public Task createTask() throws InvalidDataException {
         Task task = super.createTask();
         inMemoryTaskManager.createTask(task);
         return task;
@@ -60,7 +62,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     }
 
     @Override
-    public SubTask createSubTask(Epic epic) {
+    public SubTask createSubTask(Epic epic) throws InvalidDataException {
         SubTask subTask = super.createSubTask(epic);
         inMemoryTaskManager.createSubTask(subTask);
         return subTask;
@@ -78,43 +80,63 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_create_and_return_task() {
-        Task task = createTask();
+        try {
+            Task task = createTask();
 
-        Task createdTask = inMemoryTaskManager.getTask(currentIdOfTask);
-        assertEquals(task, createdTask, "Задача не создалась");
+            Task createdTask = inMemoryTaskManager.getTask(currentIdOfTask);
+            assertEquals(task, createdTask, "Задача не создалась");
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_create_and_return_epic() {
-        Epic epic = createEpic();
+        try {
+            Epic epic = createEpic();
 
-        Epic createdEpic = inMemoryTaskManager.getEpic(currentIdOfTask);
-        assertEquals(epic, createdEpic, "Эпик не создался");
+            Epic createdEpic = inMemoryTaskManager.getEpic(currentIdOfTask);
+            assertEquals(epic, createdEpic, "Эпик не создался");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_create_and_return_subTask() {
-        Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
+        try {
+            Epic epic = createEpic();
+            SubTask subTask = createSubTask(epic);
 
-        SubTask createdSubTask = inMemoryTaskManager.getSubTask(subTask.getId());
-        assertEquals(subTask, createdSubTask, "Задача не создалась");
+            SubTask createdSubTask = inMemoryTaskManager.getSubTask(subTask.getId());
+            assertEquals(subTask, createdSubTask, "Задача не создалась");
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_return_list_of_tasks() {
-        Task task1 = createTaskWithInputDate(LocalDateTime.now().minusDays(1));
+        try {
+            Task task1 = createTaskWithInputDate(LocalDateTime.now().minusDays(1));
 
-        Task task2 = createTaskWithInputDate(LocalDateTime.now().minusDays(2));
+            Task task2 = createTaskWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Task task3 = createTaskWithInputDate(LocalDateTime.now().minusDays(3));
+            Task task3 = createTaskWithInputDate(LocalDateTime.now().minusDays(3));
 
-        List<Task> createdTasks = new ArrayList<>(3);
-        createdTasks.add(task1);
-        createdTasks.add(task2);
-        createdTasks.add(task3);
+            List<Task> createdTasks = new ArrayList<>(3);
+            createdTasks.add(task1);
+            createdTasks.add(task2);
+            createdTasks.add(task3);
 
-        assertArrayEquals(createdTasks.toArray(), inMemoryTaskManager.getTasks().toArray());
+            assertArrayEquals(createdTasks.toArray(), inMemoryTaskManager.getTasks().toArray());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        }
     }
 
     @Test
@@ -135,177 +157,238 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_return_list_of_subtasks() {
-        Epic mainEpic = createEpic();
+        try {
+            Epic mainEpic = createEpic();
 
-        SubTask subTask1 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(1));
+            SubTask subTask1 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(1));
 
-        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+            SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
 
-        SubTask subTask3 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
+            SubTask subTask3 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
-        List<SubTask> createdSubTasks = new ArrayList<>(3);
-        createdSubTasks.add(subTask1);
-        createdSubTasks.add(subTask2);
-        createdSubTasks.add(subTask3);
+            List<SubTask> createdSubTasks = new ArrayList<>(3);
+            createdSubTasks.add(subTask1);
+            createdSubTasks.add(subTask2);
+            createdSubTasks.add(subTask3);
 
-        assertArrayEquals(createdSubTasks.toArray(), inMemoryTaskManager.getSubTasks().toArray());
+            assertArrayEquals(createdSubTasks.toArray(), inMemoryTaskManager.getSubTasks().toArray());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        }
     }
 
     @Test
     public void should_update_task() {
-        Task task = createTask();
+        try {
+            Task task = createTask();
 
-        task.setName("Updated Task 1 Name");
-        task.setDescription("Updated Task 1 description");
-        task.setTaskStatus(TaskStatuses.DONE);
+            task.setName("Updated Task 1 Name");
+            task.setDescription("Updated Task 1 description");
+            task.setTaskStatus(TaskStatuses.DONE);
 
-        inMemoryTaskManager.updateTask(task);
+            inMemoryTaskManager.updateTask(task);
 
-        assertEquals(task, inMemoryTaskManager.getTask(task.getId()));
+            assertEquals(task, inMemoryTaskManager.getTask(task.getId()));
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_update_epic() {
-        Epic epic = createEpic();
+        try {
+            Epic epic = createEpic();
 
-        SubTask subTask = createSubTask(epic);
-        ArrayList<Integer> subTasks = new ArrayList<>(1);
-        ArrayList<SubTask> subTasksData = new ArrayList<>(1);
-        subTasks.add(subTask.getId());
-        subTasksData.add(subTask);
+            SubTask subTask = createSubTask(epic);
+            ArrayList<Integer> subTasks = new ArrayList<>(1);
+            ArrayList<SubTask> subTasksData = new ArrayList<>(1);
+            subTasks.add(subTask.getId());
+            subTasksData.add(subTask);
 
-        epic.setName("Updated Task 1 Name");
-        epic.setDescription("Updated Task 1 description");
-        epic.setSubTasksIds(new ArrayList<>(1));
+            epic.setName("Updated Task 1 Name");
+            epic.setDescription("Updated Task 1 description");
+            epic.setSubTasksIds(new ArrayList<>(1));
 
-        epic.setEndTime(subTasksData);
+            epic.setEndTime(subTasksData);
 
-        inMemoryTaskManager.updateEpic(epic);
+            inMemoryTaskManager.updateEpic(epic);
 
-        assertEquals(epic, inMemoryTaskManager.getEpic(epic.getId()));
+            assertEquals(epic, inMemoryTaskManager.getEpic(epic.getId()));
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_update_subtasks_and_update_epic_task_status_and_return_done() {
-        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
+        try {
+            Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
+            Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
-        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
-        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
+            SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+            SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
-        subTask.setName("SubTask Updated Name 1");
-        subTask.setDescription("SubTask Updated Description 1");
-        subTask.setTaskStatus(TaskStatuses.DONE);
-        subTask2.setTaskStatus(TaskStatuses.DONE);
-        subTask.setEpicId(newEpic.getId());
-        subTask2.setEpicId(newEpic.getId());
+            subTask.setName("SubTask Updated Name 1");
+            subTask.setDescription("SubTask Updated Description 1");
+            subTask.setTaskStatus(TaskStatuses.DONE);
+            subTask2.setTaskStatus(TaskStatuses.DONE);
+            subTask.setEpicId(newEpic.getId());
+            subTask2.setEpicId(newEpic.getId());
 
-        inMemoryTaskManager.updateSubTask(subTask);
+            inMemoryTaskManager.updateSubTask(subTask);
 
-        assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
-        assertEquals(TaskStatuses.DONE, newEpic.getTaskStatus());
+            assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
+            assertEquals(TaskStatuses.DONE, newEpic.getTaskStatus());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_update_subtasks_and_update_epic_task_status_in_progress() {
-        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
+        try {
+            Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
+            Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
-        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
-        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
+            SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+            SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
-        subTask.setName("SubTask Updated Name 1");
-        subTask.setDescription("SubTask Updated Description 1");
-        subTask.setTaskStatus(TaskStatuses.NEW);
-        subTask2.setTaskStatus(TaskStatuses.DONE);
-        subTask.setEpicId(newEpic.getId());
-        subTask2.setEpicId(newEpic.getId());
+            subTask.setName("SubTask Updated Name 1");
+            subTask.setDescription("SubTask Updated Description 1");
+            subTask.setTaskStatus(TaskStatuses.NEW);
+            subTask2.setTaskStatus(TaskStatuses.DONE);
+            subTask.setEpicId(newEpic.getId());
+            subTask2.setEpicId(newEpic.getId());
 
-        inMemoryTaskManager.updateSubTask(subTask);
-        assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
-        assertEquals(TaskStatuses.NEW, newEpic.getTaskStatus());
+            inMemoryTaskManager.updateSubTask(subTask);
+            assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
+            assertEquals(TaskStatuses.NEW, newEpic.getTaskStatus());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_update_subtasks_and_update_epic_task_status_and_return_new() {
-        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
+        try {
+            Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
+            Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(3));
 
-        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
-        SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
+            SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(2));
+            SubTask subTask2 = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
-        subTask.setName("SubTask Updated Name 1");
-        subTask.setDescription("SubTask Updated Description 1");
-        subTask.setTaskStatus(TaskStatuses.NEW);
-        subTask2.setTaskStatus(TaskStatuses.NEW);
-        subTask.setEpicId(newEpic.getId());
-        subTask2.setEpicId(newEpic.getId());
+            subTask.setName("SubTask Updated Name 1");
+            subTask.setDescription("SubTask Updated Description 1");
+            subTask.setTaskStatus(TaskStatuses.NEW);
+            subTask2.setTaskStatus(TaskStatuses.NEW);
+            subTask.setEpicId(newEpic.getId());
+            subTask2.setEpicId(newEpic.getId());
 
-        inMemoryTaskManager.updateSubTask(subTask);
+            inMemoryTaskManager.updateSubTask(subTask);
 
-        assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
-        assertEquals(TaskStatuses.NEW, newEpic.getTaskStatus());
+            assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
+            assertEquals(TaskStatuses.NEW, newEpic.getTaskStatus());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_update_subtask_and_update_epic_task_status_and_return_in_progress() {
-        Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(1));
+        try {
+            Epic mainEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(1));
 
-        Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
+            Epic newEpic = createEpicWithInputDate(LocalDateTime.now().minusDays(2));
 
-        SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
+            SubTask subTask = createSubTaskWithInputDate(mainEpic, LocalDateTime.now().minusDays(3));
 
-        subTask.setName("SubTask Updated Name 1");
-        subTask.setDescription("SubTask Updated Description 1");
-        subTask.setTaskStatus(TaskStatuses.IN_PROGRESS);
-        subTask.setEpicId(newEpic.getId());
+            subTask.setName("SubTask Updated Name 1");
+            subTask.setDescription("SubTask Updated Description 1");
+            subTask.setTaskStatus(TaskStatuses.IN_PROGRESS);
+            subTask.setEpicId(newEpic.getId());
 
-        inMemoryTaskManager.updateSubTask(subTask);
+            inMemoryTaskManager.updateSubTask(subTask);
 
-        assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
-        assertEquals(TaskStatuses.IN_PROGRESS, newEpic.getTaskStatus());
+            assertEquals(subTask, inMemoryTaskManager.getSubTask(subTask.getId()));
+            assertEquals(TaskStatuses.IN_PROGRESS, newEpic.getTaskStatus());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_delete_task() {
-        Task task = createTask();
+        try {
+            Task task = createTask();
 
-        inMemoryTaskManager.deleteTask(task.getId());
+            inMemoryTaskManager.deleteTask(task.getId());
 
-        assertNull(inMemoryTaskManager.getTask(task.getId()));
+            assertNull(inMemoryTaskManager.getTask(task.getId()));
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            assertTrue(true);
+        }
     }
 
     @Test
     public void should_delete_epic() {
-        Epic epic = createEpic();
+        try {
+            Epic epic = createEpic();
 
-        inMemoryTaskManager.deleteEpic(epic.getId());
+            inMemoryTaskManager.deleteEpic(epic.getId());
 
-        assertNull(inMemoryTaskManager.getEpic(epic.getId()));
+            assertNull(inMemoryTaskManager.getEpic(epic.getId()));
+        } catch (NotFoundException ignore) {
+            assertTrue(true);
+        }
     }
 
     @Test
     public void should_delete_subtask() {
-        Epic epic = createEpic();
-        SubTask subTask = createSubTask(epic);
+        try {
+            Epic epic = createEpic();
+            SubTask subTask = createSubTask(epic);
 
-        inMemoryTaskManager.deleteSubTask(subTask.getId());
+            inMemoryTaskManager.deleteSubTask(subTask.getId());
 
-        assertNull(inMemoryTaskManager.getSubTask(subTask.getId()));
+            assertNull(inMemoryTaskManager.getSubTask(subTask.getId()));
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            assertTrue(true);
+        }
     }
 
 
     @Test
     public void should_delete_all_tasks() {
-        for (int i = 0; i < 10; i++) {
-            Task task = createTask();
-        }
-        inMemoryTaskManager.deleteAllTasks();
+        try {
+            createTaskWithInputDate(LocalDateTime.now().minusDays(1));
+            createTaskWithInputDate(LocalDateTime.now().minusDays(2));
+            createTaskWithInputDate(LocalDateTime.now().minusDays(3));
 
-        assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+            inMemoryTaskManager.deleteAllTasks();
+
+            assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        }
     }
 
     @Test
@@ -321,13 +404,17 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     public void should_delete_all_subtasks() {
-        Epic epic = createEpic();
-        for (int i = 0; i < 10; i++) {
-            SubTask subTask = createSubTask(epic);
-        }
-        inMemoryTaskManager.deleteAllSubTasks();
+        try {
+            Epic epic = createEpic();
+            createSubTaskWithInputDate(epic, LocalDateTime.now().minusDays(1));
+            createSubTaskWithInputDate(epic, LocalDateTime.now().minusDays(2));
+            createSubTaskWithInputDate(epic, LocalDateTime.now().minusDays(3));
+            inMemoryTaskManager.deleteAllSubTasks();
 
-        assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+            assertEquals(0, inMemoryTaskManager.getTasks().toArray().length);
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        }
     }
 
     private static Task createTaskWithInputDate(Integer currentIdOfTask, LocalDateTime inputDate, int inputDuration) {
@@ -361,48 +448,64 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
     @ParameterizedTest
     @MethodSource("tasksWithSameDates")
     public void should_not_add_overlap_task(Task task, Task task2) {
+        try {
 
-        inMemoryTaskManager.createTask(task);
-        inMemoryTaskManager.createTask(task2);
+            inMemoryTaskManager.createTask(task);
+            inMemoryTaskManager.createTask(task2);
 
-        assertEquals(1, inMemoryTaskManager.getPrioritizedTasks().size());
-        assertEquals(1, inMemoryTaskManager.getTasks().size());
+            assertEquals(1, inMemoryTaskManager.getPrioritizedTasks().size());
+            assertEquals(1, inMemoryTaskManager.getTasks().size());
+        } catch (InvalidDataException ignore) {
+            // Игнорируем так не должно создаться большой 1 задачи, что и происходит
+        }
     }
 
     @ParameterizedTest
     @MethodSource("updatedTasksWithSameDates")
     public void should_not_add_updated_overlap_tasks(Task task1, Task task2, LocalDateTime inputDate, int inputDuration) {
-        inMemoryTaskManager.createTask(task1);
-        inMemoryTaskManager.createTask(task2);
+        try {
+            inMemoryTaskManager.createTask(task1);
+            inMemoryTaskManager.createTask(task2);
 
-        Task updatedTask = new Task(task1.getId(), "Task 1", task1.getTaskStatus(), "Updated task description 1", Duration.ofSeconds(inputDuration), inputDate);
+            Task updatedTask = new Task(task1.getId(), "Task 1", task1.getTaskStatus(), "Updated task description 1", Duration.ofSeconds(inputDuration), inputDate);
 
-        inMemoryTaskManager.updateTask(updatedTask);
+            inMemoryTaskManager.updateTask(updatedTask);
 
-        assertEquals(2, inMemoryTaskManager.getPrioritizedTasks().size());
-        assertEquals(2, inMemoryTaskManager.getTasks().size());
+            assertEquals(2, inMemoryTaskManager.getPrioritizedTasks().size());
+            assertEquals(2, inMemoryTaskManager.getTasks().size());
 
-        assertNotEquals(inMemoryTaskManager.getTask(task1.getId()).getStartTime(), updatedTask.getStartTime());
+            assertNotEquals(inMemoryTaskManager.getTask(task1.getId()).getStartTime(), updatedTask.getStartTime());
+        } catch (InvalidDataException ignore) {
+            // Игнорируем так не должны создаваться или обновляться задачи если они по времени друг другу мешают
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 
     @Test
     public void should_updated_tasks() {
-        LocalDateTime now = LocalDateTime.now();
-        Task task1 = new Task(1, "Task 1", TaskStatuses.NEW, "Task description 1", Duration.ofDays(1), now);
-        inMemoryTaskManager.createTask(task1);
-        Task task2 = new Task(2, "Task 2", TaskStatuses.NEW, "Task description 2", Duration.ofDays(1), now.plusDays(1));
-        inMemoryTaskManager.createTask(task2);
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            Task task1 = new Task(1, "Task 1", TaskStatuses.NEW, "Task description 1", Duration.ofDays(1), now);
+            inMemoryTaskManager.createTask(task1);
+            Task task2 = new Task(2, "Task 2", TaskStatuses.NEW, "Task description 2", Duration.ofDays(1), now.plusDays(1));
+            inMemoryTaskManager.createTask(task2);
 
-        LocalDateTime newStartDate = now.minusHours(1);
-        Duration newDuration = Duration.ofDays(1);
-        Task taskToUpdate = new Task(task1.getId(), "Task 1", task1.getTaskStatus(), "Updated task description 1", newDuration, newStartDate);
+            LocalDateTime newStartDate = now.minusHours(1);
+            Duration newDuration = Duration.ofDays(1);
+            Task taskToUpdate = new Task(task1.getId(), "Task 1", task1.getTaskStatus(), "Updated task description 1", newDuration, newStartDate);
 
-        inMemoryTaskManager.updateTask(taskToUpdate);
-        Task updatedTask = inMemoryTaskManager.getTask(task1.getId());
+            inMemoryTaskManager.updateTask(taskToUpdate);
+            Task updatedTask = inMemoryTaskManager.getTask(task1.getId());
 
-        assertEquals(2, inMemoryTaskManager.getPrioritizedTasks().size());
-        assertEquals(2, inMemoryTaskManager.getTasks().size());
-        assertEquals(newStartDate, updatedTask.getStartTime());
-        assertEquals(newDuration, updatedTask.getDuration());
+            assertEquals(2, inMemoryTaskManager.getPrioritizedTasks().size());
+            assertEquals(2, inMemoryTaskManager.getTasks().size());
+            assertEquals(newStartDate, updatedTask.getStartTime());
+            assertEquals(newDuration, updatedTask.getDuration());
+        } catch (InvalidDataException ignore) {
+            fail("Неправильные данные");
+        } catch (NotFoundException ignore) {
+            fail("Задача не найдена");
+        }
     }
 }

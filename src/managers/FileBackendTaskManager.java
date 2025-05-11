@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.stream.Stream;
 
+import exceptions.InvalidDataException;
 import exceptions.ManagerSaveException;
 import task.Task;
 import task.SubTask;
@@ -85,7 +86,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws InvalidDataException {
         super.createTask(task);
         save();
     }
@@ -97,13 +98,13 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void createSubTask(SubTask subtask) {
+    public void createSubTask(SubTask subtask) throws InvalidDataException {
         super.createSubTask(subtask);
         save();
     }
 
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws InvalidDataException {
         super.updateTask(task);
         save();
     }
@@ -115,7 +116,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) {
+    public void updateSubTask(SubTask subTask) throws InvalidDataException {
         super.updateSubTask(subTask);
         save();
     }
