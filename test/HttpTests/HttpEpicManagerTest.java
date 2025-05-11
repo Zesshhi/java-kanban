@@ -4,12 +4,10 @@ import com.google.gson.Gson;
 import exceptions.NotFoundException;
 import http.deserializers.EpicListTypeToken;
 import http.deserializers.SubTaskListTypeToken;
-import http.deserializers.TaskListTypeToken;
 import org.junit.jupiter.api.Test;
 
 import task.Epic;
 import task.SubTask;
-import task.Task;
 import task.TaskStatuses;
 
 import java.io.IOException;

@@ -2,24 +2,12 @@ package HttpTests;
 
 import com.google.gson.Gson;
 import exceptions.NotFoundException;
-import http.HttpTaskServer;
 import http.deserializers.TaskListTypeToken;
-import managers.HistoryManager;
-import managers.Managers;
-import managers.TaskManager;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-
-import task.Epic;
-import task.SubTask;
 import task.Task;
 import task.TaskStatuses;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDateTime;
