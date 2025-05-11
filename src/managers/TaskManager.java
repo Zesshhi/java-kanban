@@ -47,5 +47,6 @@ public interface TaskManager {
     void deleteAllSubTasks();
 
     List<SubTask> getEpicSubTasks(int id) throws NotFoundException;
+
     List<Task> getPrioritizedTasks();
 }
