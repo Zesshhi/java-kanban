@@ -26,7 +26,7 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
         if (requestMethod.equals("GET")) {
             handleGetHistory(httpExchange);
         } else {
-            sendNotFound(httpExchange);
+            sendNotAllowedMethod(httpExchange);
         }
 
     }

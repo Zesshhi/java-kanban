@@ -40,7 +40,6 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
         String[] pathParts = requestPath.split("/");
         String id = pathParts[pathParts.length - 1];
 
-        JsonElement jsonElement = JsonParser.parseString(body);
 
         if (id.equals("subtasks")) {
             switch (requestMethod) {
@@ -48,14 +47,14 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
                     handleGetSubTasks(httpExchange);
                     break;
                 case "POST":
-                    JsonObject jsonObject = jsonElement.getAsJsonObject();
+                    SubTask subTask = deserialize(JsonParser.parseString(body).getAsJsonObject());
 
-                    JsonElement taskIdElem = jsonObject.get("id");
 
-                    if (taskIdElem != null && !taskIdElem.getAsString().equals("0")) {
-                        handleSubTaskUpdate(deserialize(jsonObject, taskIdElem.getAsInt()), httpExchange);
+                    if (subTask.getId() != 0) {
+                        handleSubTaskUpdate(subTask, httpExchange);
                     } else {
-                        handleSubTaskCreate(deserialize(jsonObject, HttpTaskServer.currentIdOfTask), httpExchange);
+                        subTask.setId(HttpTaskServer.currentIdOfTask);
+                        handleSubTaskCreate(subTask, httpExchange);
                     }
 
                     break;
@@ -120,7 +119,13 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
 
     }
 
-    public SubTask deserialize(JsonObject jsonObject, int currentIdOfTask) {
+    public SubTask deserialize(JsonObject jsonObject) {
+        int id;
+        if (jsonObject.get("id") != null && !jsonObject.get("id").getAsString().equals("0")) {
+            id = jsonObject.get("id").getAsInt();
+        } else {
+            id = 0;
+        }
 
         String name = jsonObject.get("name").getAsString();
         TaskStatuses taskStatus = TaskStatuses.valueOf(jsonObject.get("taskStatus").getAsString());
@@ -129,6 +134,6 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
         Duration duration = Duration.ofMinutes(jsonObject.get("duration").getAsInt());
         LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        return new SubTask(currentIdOfTask, name, taskStatus, description, epicId, duration, startTime);
+        return new SubTask(id, name, taskStatus, description, epicId, duration, startTime);
     }
 }

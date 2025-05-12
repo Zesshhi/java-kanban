@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import exceptions.InvalidDataException;
 import exceptions.ManagerSaveException;
+import exceptions.NotFoundException;
 import task.Task;
 import task.SubTask;
 import task.Epic;
@@ -116,7 +117,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager implements TaskM
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) throws InvalidDataException {
+    public void updateSubTask(SubTask subTask) throws InvalidDataException, NotFoundException {
         super.updateSubTask(subTask);
         save();
     }

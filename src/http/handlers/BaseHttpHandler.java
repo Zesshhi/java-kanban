@@ -26,6 +26,10 @@ public abstract class BaseHttpHandler {
         returnText(exchange, "Данных по этому запросу не найдено", 404);
     }
 
+    protected void sendNotAllowedMethod(HttpExchange exchange) throws IOException {
+        returnText(exchange, "Данный метод не доступен", 405);
+    }
+
     protected void sendHasIntersections(HttpExchange exchange) throws IOException {
         returnText(exchange, "Задача пересекается с существующими", 406);
     }

@@ -26,7 +26,7 @@ public interface TaskManager {
 
     void updateEpic(Epic epic);
 
-    void updateSubTask(SubTask subTask) throws InvalidDataException;
+    void updateSubTask(SubTask subTask) throws InvalidDataException, NotFoundException;
 
     void deleteTask(int id);
 

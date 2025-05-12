@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InMemoryTaskManagerTest extends TaskManagerTest {
+public class  InMemoryTaskManagerTest extends TaskManagerTest {
 
     static InMemoryTaskManager inMemoryTaskManager;
 

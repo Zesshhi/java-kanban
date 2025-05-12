@@ -134,7 +134,7 @@ public class FileBackendTaskManagerTest extends TaskManagerTest {
                     }
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                fail(e);
             }
             Assertions.assertArrayEquals(tasksList.toArray(), tasksListFromFile.toArray());
         } catch (InvalidDataException ignore) {

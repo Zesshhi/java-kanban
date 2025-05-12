@@ -35,12 +35,14 @@ public class HttpTaskServer {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         HttpTaskServer httpTaskServer = new HttpTaskServer();
+
         try {
             httpTaskServer.start();
         } catch (IOException e) {
             httpTaskServer.stop();
+            throw new IOException(e);
         }
     }
 

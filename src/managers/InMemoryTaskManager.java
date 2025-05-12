@@ -160,7 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubTask(SubTask subTask) throws InvalidDataException {
+    public void updateSubTask(SubTask subTask) throws InvalidDataException, NotFoundException {
         SubTask oldSubTask = subTasks.get(subTask.getId());
 
 
@@ -181,7 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void replaceSubTask(SubTask oldSubTask, SubTask subTask) {
+    private void replaceSubTask(SubTask oldSubTask, SubTask subTask) throws NotFoundException {
         Epic epic = epics.get(oldSubTask.getEpicId());
 
         if (!epic.getSubTasksIds().contains(oldSubTask.getId())) {
@@ -194,11 +194,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         updateTaskInTreeSet(oldSubTask, subTask);
 
-        try {
-            epic.setTaskStatus(getEpicSubTasks(subTask.getEpicId()));
-        } catch (NotFoundException ignore) {
-            System.out.println("Not Found");
-        }
+        epic.setTaskStatus(getEpicSubTasks(subTask.getEpicId()));
     }
 
     @Override
