@@ -1,3 +1,4 @@
+import exceptions.InvalidDataException;
 import managers.TaskManager;
 import task.Epic;
 import task.SubTask;
@@ -11,7 +12,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     LocalDateTime currentDate = LocalDateTime.now();
     static int currentIdOfTask;
 
-    public Task createTask() {
+    public Task createTask() throws InvalidDataException {
         currentIdOfTask++;
         Task task = new Task("Task 1", "Task description 1", currentIdOfTask, Duration.ofSeconds(10), LocalDateTime.now().minusSeconds(5));
         return task;
@@ -23,13 +24,13 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         return epic;
     }
 
-    public SubTask createSubTask(Epic epic) {
+    public SubTask createSubTask(Epic epic) throws InvalidDataException {
         currentIdOfTask++;
         SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId(), Duration.ofSeconds(10), LocalDateTime.now());
         return subTask;
     }
 
-    public Task createTaskWithSameDate() {
+    public Task createTaskWithSameDate() throws InvalidDataException {
         currentIdOfTask++;
         Task task = new Task("Task 1", "Task description 1", currentIdOfTask, Duration.ofSeconds(10), currentDate);
         return task;
@@ -41,14 +42,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         return epic;
     }
 
-    public Task createSubTaskWithSameDate(Epic epic) {
+    public Task createSubTaskWithSameDate(Epic epic) throws InvalidDataException {
         currentIdOfTask++;
         SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId(), Duration.ofSeconds(10), currentDate);
         return subTask;
     }
 
 
-    public Task createTaskWithInputDate(LocalDateTime inputDate) {
+    public Task createTaskWithInputDate(LocalDateTime inputDate) throws InvalidDataException {
         currentIdOfTask++;
         Task task = new Task("Task 1", "Task description 1", currentIdOfTask, Duration.ofSeconds(10), inputDate);
         return task;
@@ -60,7 +61,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         return epic;
     }
 
-    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) {
+    public SubTask createSubTaskWithInputDate(Epic epic, LocalDateTime inputDate) throws InvalidDataException {
         currentIdOfTask++;
         SubTask subTask = new SubTask("SubTask 1", "SubTask description 1", currentIdOfTask, epic.getId(), Duration.ofSeconds(10), inputDate);
         return subTask;

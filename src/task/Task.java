@@ -30,6 +30,14 @@ public class Task {
         this.startTime = startTime;
     }
 
+    public Task(String name, String description, TaskStatuses taskStatus, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.taskStatus = taskStatus;
+        this.description = description;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     public Task(int id, String name, TaskStatuses taskStatus, String description) {
         this.id = id;
         this.name = name;
@@ -39,6 +47,10 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getDescription() {
@@ -91,14 +103,7 @@ public class Task {
     }
 
     public static Task fromString(String[] taskData) {
-        return new Task(
-                Integer.parseInt(taskData[0]),
-                taskData[2],
-                TaskStatuses.valueOf(taskData[3]),
-                taskData[4],
-                Duration.parse(taskData[5]),
-                LocalDateTime.parse(taskData[6])
-        );
+        return new Task(Integer.parseInt(taskData[0]), taskData[2], TaskStatuses.valueOf(taskData[3]), taskData[4], Duration.parse(taskData[5]), LocalDateTime.parse(taskData[6]));
     }
 
     @Override
